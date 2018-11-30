@@ -27,18 +27,15 @@ module.exports.getUser = function (userObject, callback) {
 };
 
 module.exports.isExists = function (userObject, callback) {
-    module.exports.getUser(userObject, function (res) {
-        callback(res.length !== 0)
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("mydb");
+        dbo.collection("users").find(userObject).toArray(function (err, res) {
+            if (err) throw err;
+            db.close();
+            callback(res.length !== 0)
+        });
     });
-    // MongoClient.connect(url, function (err, db) {
-    //     if (err) throw err;
-    //     var dbo = db.db("mydb");
-    //     dbo.collection("users").find(userObject).toArray(function (err, res) {
-    //         if (err) throw err;
-    //         db.close();
-    //         callback(res.length !== 0)
-    //     });
-    // });
 };
 
 
