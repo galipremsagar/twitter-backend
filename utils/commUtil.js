@@ -4,3 +4,11 @@ module.exports.isNull = function (value) {
     else
         return false;
 };
+
+module.exports.validate = function (requestObject, dbObject, callback) {
+    if (requestObject.userName === dbObject.userName && requestObject.passWord === dbObject.passWord) {
+        callback(true);
+    } else {
+        callback(false);
+    }
+};

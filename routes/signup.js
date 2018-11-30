@@ -17,7 +17,7 @@ router.post('/', function (req, res, next) {
         var passWord = userUtil.getPassword(body);
 
         var userObject = {"userName": userName, "passWord": passWord};
-        mongoUtil.insert(userObject, function (result, error, duplicate) {
+        mongoUtil.insertUser(userObject, function (result, error, duplicate) {
             if (duplicate == true) {
                 // Log
                 res.send({"status": "error", "message": "Duplicate user id"});
@@ -32,7 +32,6 @@ router.post('/', function (req, res, next) {
     } else {
         res.send({"status": "error", "message": "Request params should be non-empty."});
     }
-    // res.send(req.body);
 });
 
 module.exports = router;
