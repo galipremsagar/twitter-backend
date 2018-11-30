@@ -4,11 +4,12 @@ var commonUtil = require('../utils/commUtil');
 var mongoUtil = require('../utils/dbUtil');
 var router = express.Router();
 
-/* GET home page. */
+/* GET request  */
 router.get('/', function (req, res, next) {
-    res.render('index', {title: 'Express'});
+    res.send({"status": "error", "message": "signup API accepts only calls of type POST"});
 });
 
+/* POST request  */
 router.post('/', function (req, res, next) {
     var body = req.body;
     if (body != undefined) {
