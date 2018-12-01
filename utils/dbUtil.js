@@ -7,6 +7,7 @@ var MongoClient = mongoDB.MongoClient;
 
 var url = "mongodb://localhost:27017";
 
+/* Utiltiy to test the Mongo DB connection */
 module.exports.testDBConnection = function (callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
@@ -16,6 +17,7 @@ module.exports.testDBConnection = function (callback) {
     });
 };
 
+/* Given the userObject({'userName':'abc'}) this function will return the entire user record. */
 module.exports.getUser = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
@@ -31,6 +33,7 @@ module.exports.getUser = function (userObject, callback) {
     });
 };
 
+/* Given the userObject({'userName':'abc'}) this function will check if the record exists. */
 module.exports.isExists = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -49,7 +52,7 @@ module.exports.isExists = function (userObject, callback) {
     });
 };
 
-
+/* Given the userObject({'userName':'abc', 'passWord': 'xyz'}) this function will insert into users collection. */
 module.exports.insertUser = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -73,6 +76,10 @@ module.exports.insertUser = function (userObject, callback) {
 };
 
 
+/*
+* Given the userObject({'username':'abc'}) this function will return the sessionID of the user.
+* Note: Before calling this function please call checkAndRenewSessionExpiry function
+*/
 module.exports.getSessionId = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -91,6 +98,9 @@ module.exports.getSessionId = function (userObject, callback) {
     });
 };
 
+/*
+* Given the userObject({'username':'abc'}) this function will check the sessionID expiry and renew it if it is about to expire. This function will return the sessionID.
+*/
 module.exports.checkAndRenewSessionExpiry = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -106,7 +116,7 @@ module.exports.checkAndRenewSessionExpiry = function (userObject, callback) {
             db.close();
             var time = new Date(res.expirationTime);
             var diff = moment(new Date()).diff(time, 'minutes');
-            if (diff < 2){
+            if (diff < 2) {
                 var insertObject = {};
                 insertObject.userName = res.userName;
                 insertObject.sessionId = res.sessionId;
@@ -120,15 +130,18 @@ module.exports.checkAndRenewSessionExpiry = function (userObject, callback) {
                         callback(undefined, err);
                     }
                     db.close();
-                    callback(res);
+                    callback(res.value.sessionId);
                 });
-            }else{
-                callback(res);
+            } else {
+                callback(res.sessionId);
             }
         });
     });
 };
 
+/*
+* Given the userObject({'username':'abc'}) this function will generate new sessionId and store it with 2 minutes of expiry time.
+*/
 module.exports.setSessionId = function (userObject, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
