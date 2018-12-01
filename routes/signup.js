@@ -24,7 +24,7 @@ router.post('/', function (req, res, next) {
 
         var userObject = {"userName": userName, "passWord": passWord};
         mongoUtil.insertUser(userObject, function (result, error, duplicate) {
-            if (duplicate == true) {
+            if (duplicate === true) {
                 logger.info("Duplicate user creation attempt", userObject.userName);
                 res.send({"status": "error", "message": "Duplicate user id"});
             } else if (error != undefined) {
